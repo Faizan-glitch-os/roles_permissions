@@ -1,4 +1,4 @@
-@push('scripts')
+{{-- @push('scripts')
     <script>
         document.addEventListener('change', function(e) {
             const form = e.target.closest('form');
@@ -10,9 +10,9 @@
             }
         });
     </script>
-@endpush
-
+@endpush --}}
 <x-app-layout>
+
     <x-slot name="header">
         <div class="flex justify-between items-center">
             <h2 class="font-semibold text-xl text-gray-800">Invoices</h2>
@@ -103,19 +103,24 @@
 
                                         <div class="md:col-span-2">
                                             <label class="block text-xs font-medium">Expiry</label>
-                                            <div class="flex gap-2 text-xs items-center">
-                                                <label><input type="radio" name="expiry_mode" value="forever" checked>
-                                                    Forever</label>
-                                                <label><input type="radio" name="expiry_mode" value="date">
-                                                    Until</label>
-                                                <input type="datetime-local" name="expires_at" disabled
-                                                    class="border rounded p-1 text-xs flex-1">
-                                            </div>
+                                            <label>
+                                                <input type="radio" name="expiry_mode" value="forever" checked
+                                                    onchange="this.closest('form').querySelector('[name=expires_at]').disabled = true">
+                                                Forever
+                                            </label>
+                                            <label>
+                                                <input type="radio" name="expiry_mode" value="date"
+                                                    onchange="this.closest('form').querySelector('[name=expires_at]').disabled = false">
+                                                Until
+                                            </label>
+                                            <input type="datetime-local" name="expires_at" disabled
+                                                class="border rounded p-1 text-xs flex-1">
+
                                         </div>
 
                                         <div>
                                             <button
-                                                class="px-3 py-1 bg-indigo-600 text-white rounded text-sm w-full">Grant</button>
+                                                class="px-3 py-1 bg-indigo-600 text-white rounded text-sm">Grant</button>
                                         </div>
                                     </form>
                                 </td>
