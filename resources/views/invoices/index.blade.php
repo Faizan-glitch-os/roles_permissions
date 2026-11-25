@@ -67,15 +67,15 @@
                                 <a href="{{ route('invoices.show', $invoice) }}"
                                     class="text-indigo-600 hover:underline">View</a>
 
-                                @if (auth()->user()->isAdmin())
+                                {{-- @if (auth()->user()->isAdmin())
                                     <button type="button" class="ml-2 text-purple-600 hover:underline"
                                         onclick="document.getElementById('perm-{{ $invoice->id }}').classList.toggle('hidden')">
                                         Permissions
                                     </button>
-                                @endif
+                                @endif --}}
                             </td>
                         </tr>
-                        @if (auth()->user()->isAdmin())
+                        {{-- @if (auth()->user()->isAdmin())
                             <tr id="perm-{{ $invoice->id }}" class="hidden bg-gray-50">
                                 <td colspan="7" class="p-4">
                                     <form method="POST" action="{{ route('admin.permissions.store') }}"
@@ -125,7 +125,7 @@
                                     </form>
                                 </td>
                             </tr>
-                        @endif
+                        @endif --}}
                     @empty
                         <tr>
                             <td colspan="7" class="p-6 text-center text-gray-500">No invoices.</td>
