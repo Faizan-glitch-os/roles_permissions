@@ -30,10 +30,11 @@ class InvoiceService
         });
     }
 
-    public function update(Invoice $invoice, array $data): Invoice
+    public function update(Invoice $invoice, array $data, $isAdmin): Invoice
     {
-        return DB::transaction(function () use ($invoice, $data) {
+        return DB::transaction(function () use ($invoice, $data, $isAdmin) {
             $invoice->update([
+                'status' => $isAdmin ? $invoice->status : 'pending_approval',
                 'customer_name' => $data['customer_name'],
                 'customer_email' => $data['customer_email'] ?? null,
                 'customer_address' => $data['customer_address'] ?? null,

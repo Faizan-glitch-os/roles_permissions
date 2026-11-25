@@ -46,9 +46,9 @@ class InvoicePolicy
             return false;
         }
 
-        if ($invoice->status === 'pending_approval') {
-            return false;
-        }
+        // if ($invoice->status === 'pending_approval') {
+        //     return false;
+        // }
 
         if ($invoice->created_by === $user->id) {
             return true;

@@ -91,10 +91,11 @@ class InvoiceController extends Controller
     {
         Gate::authorize('update', $invoice);
 
-        $this->invoiceService->update($invoice, $request->validated());
+        $this->invoiceService->update($invoice, $request->validated(), auth()->user()->isAdmin());
 
         return redirect()->route('invoices.show', $invoice)
             ->with('success', 'Invoice updated.');
+
     }
 
     public function submit(Invoice $invoice)
