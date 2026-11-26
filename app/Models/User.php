@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
-#[Fillable(['name', 'email', 'role', 'password'])]
+#[Fillable(['name', 'email', 'role', 'password', 'can_create', 'can_edit', 'can_view', 'can_delete', 'can_approve'])]
 #[Hidden(['password', 'remember_token'])]
 class User extends Authenticatable
 {
@@ -26,6 +26,11 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'can_edit' => 'boolean',
+            'can_view' => 'boolean',
+            'can_delete' => 'boolean',
+            'can_create' => 'boolean',
+            'can_approve' => 'boolean',
         ];
     }
 
@@ -54,16 +59,17 @@ class User extends Authenticatable
         return $this->hasMany(InvoiceApproval::class, 'admin_id');
     }
 
-    /** Global "create" permission (permanent). Admins always can. */
     public function canCreateInvoice(): bool
     {
-        if ($this->isAdmin()) {
+        if ($this->can_create) {
             return true;
+        } else {
+            return false;
         }
 
-        return $this->permissions()
-            ->whereNull('invoice_id')
-            ->where('can_create', true)
-            ->exists();
+        // return $this->permissions()
+        //     ->whereNull('invoice_id')
+        //     ->where('can_create', true)
+        //     ->exists();
     }
 }

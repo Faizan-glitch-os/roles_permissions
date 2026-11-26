@@ -13,51 +13,66 @@ class PermissionController extends Controller
     public function index()
     {
         $users = User::all();
-        $invoices = Invoice::orderByDesc('id')->limit(200)->get();
+        // $invoices = Invoice::orderByDesc('id')->limit(200)->get();
 
-        $invoicePermissions = InvoicePermission::with('invoice')
-            ->whereIn('user_id', $users->pluck('id'))
-            ->latest()
-            ->get()
-            ->groupBy('user_id');
+        // $invoicePermissions = InvoicePermission::with('invoice')
+        //     ->whereIn('user_id', $users->pluck('id'))
+        //     ->latest()
+        //     ->get()
+        //     ->groupBy('user_id');
 
-        return view('admin.permissions.index', compact('users', 'invoices', 'invoicePermissions'));
+        return view('admin.permissions.index',
+            compact('users',
+                // 'invoices',
+                // 'invoicePermissions'
+            ));
     }
 
     public function store(Request $request)
     {
         $data = $request->validate([
             'user_id' => 'required|exists:users,id',
-            'invoice_id' => 'nullable|exists:invoices,id',
-            'can_view' => 'boolean',
-            'can_edit' => 'boolean',
-            'can_create' => 'boolean',
-            'expires_at' => 'nullable|date|after:now',
-            'expiry_mode' => 'nullable|in:forever,date',
+            // 'invoice_id' => 'nullable|exists:invoices,id',
+            'can_view' => ['sometimes', 'boolean'],
+            'can_edit' => ['sometimes', 'boolean'],
+            'can_create' => ['sometimes', 'boolean'],
+            'can_delete' => ['sometimes', 'boolean'],
+            'can_approve' => ['sometimes', 'boolean'],
+            // 'expires_at' => 'nullable|date|after:now',
+            // 'expiry_mode' => 'nullable|in:forever,date',
         ]);
 
         $target = User::findOrFail($data['user_id']);
-        abort_unless($target->isEmployee(), 422, 'Permissions apply only to employees.');
+        // abort_unless($target->isEmployee(), 422, 'Permissions apply only to employees.');
 
-        $expiresAt = ($request->input('expiry_mode') === 'forever')
-            ? null
-            : ($data['expires_at'] ?? null);
+        // $expiresAt = ($request->input('expiry_mode') === 'forever')
+        //     ? null
+        //     : ($data['expires_at'] ?? null);
 
-        InvoicePermission::updateOrCreate(
-            [
-                'user_id' => $target->id,
-                'invoice_id' => $data['invoice_id'] ?? null,
-            ],
-            [
-                'can_view' => $request->boolean('can_view'),
-                'can_edit' => $request->boolean('can_edit'),
-                'can_create' => $request->boolean('can_create'),
-                'expires_at' => $expiresAt,
-                'granted_by' => $request->user()->id,
-            ]
-        );
+        // InvoicePermission::updateOrCreate(
+        //     [
+        //         'user_id' => $target->id,
+        //         'invoice_id' => $data['invoice_id'] ?? null,
+        //     ],
+        //     [
+        //         'can_view' => $request->boolean('can_view'),
+        //         'can_edit' => $request->boolean('can_edit'),
+        //         'can_create' => $request->boolean('can_create'),
+        //         'expires_at' => $expiresAt,
+        //         'granted_by' => $request->user()->id,
+        //     ]
+        // );
 
-        return back()->with('success', 'Permission saved for '.$target->name.'.');
+        $target->update([
+            'can_approve' => $request->boolean('can_approve'),
+            'can_edit' => $request->boolean('can_edit'),
+            'can_delete' => $request->boolean('can_delete'),
+            'can_view' => $request->boolean('can_view'),
+            'can_create' => $request->boolean('can_create'),
+
+        ]);
+
+        return back()->with('success', 'Permissions saved'.' '.$target->name);
     }
 
     public function revokeForInvoice(Request $request, Invoice $invoice, User $user)
