@@ -12,16 +12,16 @@ class PermissionController extends Controller
 {
     public function index()
     {
-        $employees = User::where('role', 'employee')->orderBy('name')->get();
+        $users = User::all();
         $invoices = Invoice::orderByDesc('id')->limit(200)->get();
 
-        $permissions = InvoicePermission::with('invoice')
-            ->whereIn('user_id', $employees->pluck('id'))
+        $invoicePermissions = InvoicePermission::with('invoice')
+            ->whereIn('user_id', $users->pluck('id'))
             ->latest()
             ->get()
             ->groupBy('user_id');
 
-        return view('admin.permissions.index', compact('employees', 'invoices', 'permissions'));
+        return view('admin.permissions.index', compact('users', 'invoices', 'invoicePermissions'));
     }
 
     public function store(Request $request)
