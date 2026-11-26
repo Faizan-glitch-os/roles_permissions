@@ -16,24 +16,24 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // User::create([
-        //     'name' => 'Admin One',
-        //     'email' => 'admin1@kaka.com',
-        //     'password' => Hash::make('password'),
-        //     'role' => 'admin',
-        // ]);
-        // User::create([
-        //     'name' => 'Admin Two',
-        //     'email' => 'admin2@kaka.com',
-        //     'password' => Hash::make('password'),
-        //     'role' => 'admin',
-        // ]);
-        // User::create([
-        //     'name' => 'Employee One',
-        //     'email' => 'employee1@kaka.com',
-        //     'password' => Hash::make('password'),
-        //     'role' => 'employee',
-        // ]);
+        User::create([
+            'name' => 'Admin One',
+            'email' => 'admin1@kaka.com',
+            'password' => Hash::make('password'),
+            'role' => 'admin',
+        ]);
+        User::create([
+            'name' => 'Admin Two',
+            'email' => 'admin2@kaka.com',
+            'password' => Hash::make('password'),
+            'role' => 'admin',
+        ]);
+        User::create([
+            'name' => 'Employee One',
+            'email' => 'employee1@kaka.com',
+            'password' => Hash::make('password'),
+            'role' => 'employee',
+        ]);
         User::create([
             'name' => 'Employee Two',
             'email' => 'employee2@kaka.com',

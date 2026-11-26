@@ -26,7 +26,37 @@ Route::get('/', fn () => redirect()->route('invoices.index'));
 Route::middleware(['auth'])->group(function () {
     Route::get('/dashboard', fn () => redirect()->route('invoices.index'))->name('dashboard');
 
-    Route::resource('invoices', InvoiceController::class)->except(['destroy']);
+    // index  — list all invoices
+    Route::get('invoices', [InvoiceController::class, 'index'])
+        ->name('invoices.index');
+
+    // create — show the "new invoice" form
+    Route::get('invoices/create', [InvoiceController::class, 'create'])
+        ->name('invoices.create');
+
+    // store  — persist a new invoice (form POST)
+    Route::post('invoices', [InvoiceController::class, 'store'])
+        ->name('invoices.store');
+
+    // show   — display a single invoice
+    Route::get('invoices/{invoice}', [InvoiceController::class, 'show'])
+        ->name('invoices.show');
+
+    // edit   — show the "edit invoice" form
+    Route::get('invoices/{invoice}/edit', [InvoiceController::class, 'edit'])
+        ->name('invoices.edit');
+
+    // update — persist changes (PUT and PATCH both map here)
+    Route::put('invoices/{invoice}', [InvoiceController::class, 'update'])
+        ->name('invoices.update');
+    Route::patch('invoices/{invoice}', [InvoiceController::class, 'update'])
+        ->name('invoices.update');
+
+    // destroy — delete an invoice
+    Route::delete('invoices/{invoice}', [InvoiceController::class, 'destroy'])
+        ->name('invoices.destroy');
+
+    Route::post('invoices/permissions', [InvoiceController::class, 'invoicePermissions'])->name('invoices.permissions')->middleware('role:admin');
     Route::post('invoices/{invoice}/submit', [InvoiceController::class, 'submit'])->name('invoices.submit');
     Route::get('invoices/{invoice}/pdf', InvoicePdfController::class)->name('invoices.pdf');
 

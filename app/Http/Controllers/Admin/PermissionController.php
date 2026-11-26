@@ -63,16 +63,29 @@ class PermissionController extends Controller
         //     ]
         // );
 
-        $target->update([
+        $permissions = [
             'can_approve' => $request->boolean('can_approve'),
             'can_edit' => $request->boolean('can_edit'),
             'can_delete' => $request->boolean('can_delete'),
             'can_view' => $request->boolean('can_view'),
             'can_create' => $request->boolean('can_create'),
 
-        ]);
+        ];
 
-        return back()->with('success', 'Permissions saved'.' '.$target->name);
+        $target->update($permissions);
+
+        InvoicePermission::where('user_id', $target->id)->update(
+            [
+                'can_approve' => $permissions['can_approve'],
+                'can_edit' => $permissions['can_edit'],
+                'can_delete' => $permissions['can_delete'],
+                'can_view' => $permissions['can_view'],
+                'can_create' => $permissions['can_create'],
+
+            ]
+        );
+
+        return back()->with('success', 'Permissions saved for'.' '.$target->name);
     }
 
     public function revokeForInvoice(Request $request, Invoice $invoice, User $user)

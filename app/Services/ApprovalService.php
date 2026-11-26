@@ -13,7 +13,7 @@ class ApprovalService
         DB::transaction(function () use ($invoice) {
             $invoice->update(['status' => 'pending_approval']);
 
-            $adminIds = User::where('role', 'admin')->pluck('id');
+            $adminIds = User::where('can_approve', true)->pluck('id');
 
             $invoice->approvals()->delete();
             foreach ($adminIds as $id) {

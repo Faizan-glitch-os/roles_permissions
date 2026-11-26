@@ -12,7 +12,9 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('invoice_permissions', function (Blueprint $table) {
-            $table->boolean('can_delete')->after('can_create')->default(false);
+            $table->boolean('can_approve')->after('can_create')->default(false);
+            $table->boolean('can_delete')->default(false);
+
         });
     }
 
@@ -22,7 +24,7 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('invoice_permissions', function (Blueprint $table) {
-            $table->dropColumn('can_delete');
+            $table->dropColumn(['can_approve', 'can_delete']);
         });
     }
 };

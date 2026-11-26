@@ -17,7 +17,8 @@ class InvoicePolicy
 
     public function before(User $user, string $ability): ?bool
     {
-        return $user->isAdmin() ? true : null;
+        // return $user->isAdmin() ? true : null;
+        return null;
     }
 
     public function viewAny(User $user): bool
@@ -36,8 +37,7 @@ class InvoicePolicy
 
     public function create(User $user): bool
     {
-        // return $user->canCreateInvoice();
-        return true;
+        return $user->canCreateInvoice();
     }
 
     public function update(User $user, Invoice $invoice): bool
@@ -50,9 +50,9 @@ class InvoicePolicy
         //     return false;
         // }
 
-        if ($invoice->created_by === $user->id) {
-            return true;
-        }
+        // if ($invoice->created_by === $user->id) {
+        //     return true;
+        // }
 
         return $this->hasPermission($user, $invoice, 'can_edit');
     }
@@ -65,7 +65,12 @@ class InvoicePolicy
 
     public function approve(User $user, Invoice $invoice): bool
     {
-        return false;
+        return $this->hasPermission($user, $invoice, 'can_approve');
+    }
+
+    public function delete(User $user, Invoice $invoice): bool
+    {
+        return $this->hasPermission($user, $invoice, 'can_delete');
     }
 
     public function generatePdf(User $user, Invoice $invoice): bool
@@ -83,12 +88,11 @@ class InvoicePolicy
         return $this->hasPermission($user, $invoice, 'can_view');
     }
 
-    protected function hasPermission(User $user, Invoice $invoice, string $ability): bool
+    protected function hasPermission(User $user, Invoice $invoice, string $permission): bool
     {
-        $column = $ability === 'can_view' ? 'can_view' : 'can_edit';
 
         return $user->permissions()
-            ->where($column, true)
+            ->where($permission, true)
             ->where(function ($q) use ($invoice) {
                 $q->where('invoice_id', $invoice->id)->orWhereNull('invoice_id');
             })

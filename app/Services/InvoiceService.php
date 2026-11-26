@@ -3,6 +3,8 @@
 namespace App\Services;
 
 use App\Models\Invoice;
+use App\Models\InvoicePermission;
+use App\Models\User;
 use Illuminate\Support\Facades\DB;
 
 class InvoiceService
@@ -25,6 +27,7 @@ class InvoiceService
             ]);
 
             $this->syncItems($invoice, $data['items'] ?? []);
+            $this->copyPermissions($invoice, $userId);
 
             return $invoice;
         });
@@ -68,5 +71,31 @@ class InvoiceService
             ]);
         }
         $invoice->recalculateTotals();
+    }
+
+    protected function copyPermissions($invoice, $granter_id)
+    {
+
+        $userPermissions = User::query()
+            ->get(['id', 'can_approve', 'can_view', 'can_edit', 'can_delete', 'can_create'])
+            ->map(function ($u) use ($invoice, $granter_id) {
+                return [
+                    'invoice_id' => $invoice->id,
+                    'user_id' => $u->id,
+                    'granted_by' => $granter_id,
+                    'can_approve' => $u->can_approve,
+                    'can_view' => $u->can_view,
+                    'can_edit' => $u->can_edit,
+                    'can_create' => $u->can_create,
+                    'can_delete' => $u->can_delete,
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ];
+            })
+            ->all();
+
+        if ($userPermissions) {
+            InvoicePermission::insert($userPermissions);
+        }
     }
 }

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Invoice;
 use App\Services\ApprovalService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 
 class InvoiceApprovalController extends Controller
 {
@@ -12,8 +13,7 @@ class InvoiceApprovalController extends Controller
 
     public function approve(Request $request, Invoice $invoice)
     {
-        abort_unless($request->user()->isAdmin(), 403);
-        abort_unless($invoice->status === 'pending_approval', 400);
+        Gate::authorize('approve', $invoice);
 
         $data = $request->validate(['comment' => 'nullable|string|max:2000']);
 
@@ -24,8 +24,7 @@ class InvoiceApprovalController extends Controller
 
     public function reject(Request $request, Invoice $invoice)
     {
-        abort_unless($request->user()->isAdmin(), 403);
-        abort_unless($invoice->status === 'pending_approval', 400);
+        Gate::authorize('approve', $invoice);
 
         $data = $request->validate(['comment' => 'required|string|max:2000']);
 

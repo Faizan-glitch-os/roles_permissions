@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class InvoicePermission extends Model
 {
     protected $fillable = [
-        'user_id', 'invoice_id', 'can_view', 'can_edit', 'can_create',
+        'user_id', 'invoice_id', 'can_view', 'can_edit', 'can_create', 'can_approve', 'can_delete',
         'expires_at', 'granted_by',
     ];
 
@@ -15,6 +15,8 @@ class InvoicePermission extends Model
         'can_view' => 'boolean',
         'can_edit' => 'boolean',
         'can_create' => 'boolean',
+        'can_approve' => 'boolean',
+        'can_delete' => 'boolean',
         'expires_at' => 'datetime',
     ];
 
